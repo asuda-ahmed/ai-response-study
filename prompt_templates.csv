@@ -1,0 +1,44 @@
+Prompt_Type,Prompt_Template
+Zero-shot,"Evaluate the nutritional balance, portion sizes, and overall healthiness of this meal: {meal_description}. Suggest improvements. Please keep your reponse brief and concise"
+Few-shot,"Here are examples of evaluating meals:
+
+Example 1:
+Meal: Grilled chicken breast (150g), mixed salad, brown rice (100g).
+Evaluation: Balanced protein, carbs, and vegetables; portion sizes appropriate. Suggest adding a fruit serving.
+
+Example 2:
+Meal: Large pepperoni pizza slice, soda.
+Evaluation: High in saturated fat and sugar, lacks vegetables, portion too large. Suggest smaller portion and adding salad.
+
+Now evaluate this meal:
+{meal_description}.
+Suggest ways to improve. Please keep your response brief and concise."
+Chain-of-Thought,"Step 1: Analyze the protein content and sources in the meal.
+Step 2: Analyze the carbohydrate sources and portion sizes.
+Step 3: Analyze the vegetable content and variety.
+Step 4: Assess fat sources and quantity.
+Step 5: Summarize overall healthiness.
+Step 6: Suggest specific improvements to meet the guidelines better.
+
+Now perform these steps for this meal:
+{meal_description}. Please keep your response brief and concise."
+Role Prompting,"You are a certified nutritionist. Please evaluate the following meal. Comment on its nutritional balance, portion sizes, and healthiness, and then suggest improvements: {meal_description}. Please keep your response brief and clear."
+Retrieval Augmented Generation (RAG),"Context from the UK Eatwell Guide:
+{context}
+
+Using this information, please evaluate the following meal for nutritional balance, portion sizes, and healthiness:
+Meal: {meal_description}
+Suggest practical improvements to better align the meal with the Eatwell Guide. Please keep your response brief and clear."
+Style-Control Prompting,"Please analyze the following meal for balance of food groups, portion sizes, and overall dietary quality. Your response should:
+- Be clear, friendly, and easy to understand, as if explaining to someone without nutrition background.
+- Use concise bullet points for each nutrient or food group.
+- Include practical, actionable suggestions for improvement where needed.
+- End with a short conclusion that:
+    - If the meal is balanced, say something like: ""This meal is well balanced — keep it up! Here are some tips to maintain this quality.""
+    - If the meal needs improvement, provide specific, actionable advice on what to adjust.
+    - If the meal is mostly good but could be better, encourage with positive feedback plus clear next steps.
+
+Meal: {meal_description}
+
+End with a short summary highlighting the main takeaways.
+Keep the tone friendly and supportive, like explaining to someone with no nutrition background."
