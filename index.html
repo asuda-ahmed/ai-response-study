@@ -1,45 +1,9 @@
-
-<script>
-function loadSampleData() {
-            // Generate session ID
-            sessionId = generateSessionId();
-            document.getElementById('sessionId').value = sessionId;
-            
-            // Create sample data for demonstration
-            promptsData = [
-                "Create a healthy breakfast recipe that takes less than 10 minutes to prepare.",
-                "Design a quick lunch meal for someone with dietary restrictions.",
-                "Suggest a dinner recipe that uses seasonal vegetables.",
-                "Plan a nutritious snack that's perfect for post-workout recovery.",
-                "Create a weekend brunch recipe that serves 4 people."
-            ];
-
-            mistralData = [
-                "Quick Avocado Toast: Toast 2 slices of whole grain bread, mash 1 ripe avocado with lemon juice, salt, and pepper. Spread on toast, top with cherry tomatoes and a sprinkle of hemp seeds. Ready in 5 minutes with protein, healthy fats, and fiber to fuel your morning.",
-                "Mediterranean Quinoa Bowl: Combine pre-cooked quinoa with cucumber, tomatoes, olives, and feta cheese. Dress with olive oil and lemon. This gluten-free, vegetarian option is rich in protein and can be prepared in advance for busy days.",
-                "Roasted Autumn Vegetables with Herbs: Toss butternut squash, Brussels sprouts, and sweet potatoes with olive oil, rosemary, and thyme. Roast at 425°F for 25-30 minutes. Serve over quinoa or with grilled protein for a complete seasonal meal.",
-                "Greek Yogurt Parfait: Layer Greek yogurt with berries, granola, and a drizzle of honey. Add chia seeds for extra protein and omega-3s. This combination provides probiotics, antioxidants, and sustained energy perfect for post-exercise recovery.",
-                "Weekend Pancake Stack: Make fluffy pancakes using oat flour, eggs, and Greek yogurt. Serve with fresh berries and maple syrup. This protein-rich version serves 4 and creates a special weekend morning experience for the whole family."
-            ];
-
-            geminiData = [
-                "Energizing Smoothie Bowl: Blend frozen banana, spinach, and protein powder with almond milk. Pour into a bowl and top with granola, fresh berries, and coconut flakes. This nutrient-dense breakfast provides vitamins, minerals, and sustained energy in just 8 minutes.",
-                "Asian-Inspired Lettuce Wraps: Fill butter lettuce leaves with cooked ground turkey, shredded carrots, and edamame. Dress with sesame oil and rice vinegar. This low-carb, high-protein lunch is naturally gluten-free and dairy-free.",
-                "Harvest Vegetable Curry: Sauté seasonal squash, carrots, and kale in coconut milk with curry spices. Serve over brown rice. This warming dinner celebrates fall flavors while providing plant-based nutrition and comfort food satisfaction.",
-                "Power Balls: Mix dates, almonds, and cacao powder in a food processor. Roll into balls and chill. These no-bake energy bites provide natural sugars, healthy fats, and antioxidants - perfect for pre or post-workout fuel.",
-                "Stuffed French Toast: Create a cream cheese and berry filling between thick bread slices, dip in egg mixture, and cook until golden. Dust with powdered sugar and serve with fresh fruit. This indulgent brunch recipe serves 4 and creates lasting weekend memories."
-            ];
-
-            // Generate random mapping for blind testing
-            generateRandomMapping();
-        </script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Response Comparison</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
+    <title>AI Response Voting</title>
     <style>
         * {
             margin: 0;
@@ -48,1019 +12,718 @@ function loadSampleData() {
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: #333;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+            padding: 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .header h1 {
-            color: #2c3e50;
+            color: white;
             font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .header p {
-            color: #6c757d;
-            font-size: 1.1rem;
+        .description {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
-        .upload-section {
-            background: #f8f9fa;
+        .description p {
+            font-size: 1.2rem;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .setup-section {
+            background: white;
             border-radius: 15px;
             padding: 30px;
             margin-bottom: 30px;
-            border: 2px dashed #dee2e6;
-            text-align: center;
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .upload-section:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
+        .setup-section h2 {
+            margin-bottom: 20px;
+            color: #4a5568;
         }
 
-        .file-input {
-            margin: 10px;
-            padding: 12px 24px;
-            border: 2px solid #667eea;
+        .config-note {
+            background: #fef5e7;
+            border: 1px solid #f6ad55;
             border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #744210;
         }
 
-        .file-input:hover {
-            background: #667eea;
-            color: white;
+        .config-note strong {
+            color: #c05621;
         }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+        .code-example {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            color: #2d3748;
         }
 
         .btn {
-            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
             border: none;
-            border-radius: 25px;
-            font-size: 1rem;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 120px;
         }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
+        .voting-section {
+            display: none;
         }
 
-        .response-grid {
+        .progress-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .progress-container {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .meal-description {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .meal-description h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .meal-description p {
+            font-size: 1.1rem;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .comparison-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 40px;
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
         .response-card {
             background: white;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border-left: 5px solid;
-            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
 
         .response-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .response-a {
-            border-left-color: #667eea;
-        }
-
-        .response-b {
-            border-left-color: #764ba2;
-        }
-
-        .model-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .model-icon {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .response-a-icon {
-            background: #667eea;
-        }
-
-        .response-b-icon {
-            background: #764ba2;
-        }
-
-        .prompt-section {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #ffd93d;
-        }
-
-        .prompt-title {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-
-        .prompt-text {
-            color: #495057;
-            line-height: 1.6;
-            font-style: italic;
-        }
-
-        .response-text {
-            color: #495057;
-            line-height: 1.7;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-        }
-
-        .preference-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .preference-btn {
-            flex: 1;
-            padding: 10px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .preference-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .preference-btn.selected {
-            background: #28a745;
-            color: white;
-            border-color: #28a745;
-        }
-
-        .preference-btn.response-a-selected {
-            background: #667eea;
-            border-color: #667eea;
-            color: white;
-        }
-
-        .preference-btn.response-b-selected {
-            background: #764ba2;
-            border-color: #764ba2;
-            color: white;
-        }
-
-        .results-section {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 30px;
-            border: 2px solid #dee2e6;
-        }
-
-        .results-header {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .result-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .result-number {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .result-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .export-btn {
-            background: #17a2b8;
-            color: white;
-            margin-top: 15px;
-        }
-
-        .export-btn:hover {
-            background: #138496;
-            transform: translateY(-2px);
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .nav-info {
-            background: #e9ecef;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .progress-section {
-            background: #e3f2fd;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-left: 5px solid #2196f3;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            transition: width 0.3s ease;
-            border-radius: 10px;
-        }
-
-        .completion-status {
+        .response-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f7fafc;
         }
 
-        .mandatory-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
+        .response-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4a5568;
+        }
+
+        .model-index {
+            background: #e2e8f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #2d3748;
+        }
+
+        .response-content {
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #2d3748;
+            font-size: 1rem;
+            min-height: 200px;
+            overflow-y: auto;
+        }
+
+        .vote-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            font-size: 1.1rem;
             padding: 15px;
-            margin: 20px 0;
-            color: #856404;
-            text-align: center;
+            margin-bottom: 10px;
         }
 
-        .export-section {
-            background: #d4edda;
-            border: 2px solid #c3e6cb;
+        .vote-btn:hover {
+            background: linear-gradient(135deg, #38a169, #2f855a);
+        }
+
+        .neither-btn {
+            background: linear-gradient(135deg, #f6ad55, #ed8936);
+        }
+
+        .neither-btn:hover {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+        }
+
+        .voting-actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .neither-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .submit-section {
+            background: white;
             border-radius: 15px;
-            padding: 25px;
-            margin-top: 30px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             text-align: center;
+            display: none;
         }
 
-        .export-section.incomplete {
-            background: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
+        .submit-section h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
         }
 
-        .export-section.complete {
-            background: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            margin: 10px;
         }
 
-        .completion-checkmark {
-            font-size: 3rem;
+        .continue-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+            margin: 10px;
+        }
+
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #c53030;
+        }
+
+        .success {
+            background: #c6f6d5;
+            color: #276749;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #276749;
+        }
+
+        .instructions {
+            background: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #2b6cb0;
             margin-bottom: 15px;
         }
 
-        .participant-section {
-            background: #f0f4ff;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 2px solid #667eea;
+        .instructions ol {
+            margin-left: 20px;
+            color: #2d3748;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
         }
 
         @media (max-width: 768px) {
-            .response-grid {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .comparison-container {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
+
+            .response-content {
+                min-height: 150px;
+                font-size: 0.95rem;
             }
-            
-            .btn {
-                width: 200px;
+
+            .setup-section {
+                padding: 20px;
+            }
+
+            .code-example {
+                font-size: 12px;
+            }
+
+            .description {
+                padding: 20px;
+            }
+
+            .description p {
+                font-size: 1.1rem;
             }
         }
-
-        .status-message {
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-weight: 500;
+        .spinner {
+          border: 6px solid #f3f3f3; /* Light grey */
+          border-top: 6px solid #3498db; /* Blue */
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          animation: spin 1s linear infinite;
+          margin: auto;
         }
 
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>AI Response Comparison</h1>
-            <p>Compare responses from Mistral and Gemini side by side</p>
+            <h1>🍽️ AI Meal Analysis Voting 🤖</h1>
         </div>
 
-        <div class="participant-section">
-            <h3 style="margin-bottom: 20px; color: #495057;">Participant Information</h3>
-            <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; justify-content: center;">
-                <div>
-                    <label for="participantId" style="display: block; margin-bottom: 5px; font-weight: 600; color: #495057;">Your Name/ID:</label>
-                    <input type="text" id="participantId" placeholder="Enter your name or ID" 
-                           style="padding: 10px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem; width: 200px;" />
-                </div>
-                <div>
-                    <label for="sessionId" style="display: block; margin-bottom: 5px; font-weight: 600; color: #495057;">Session ID:</label>
-                    <input type="text" id="sessionId" readonly 
-                           style="padding: 10px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem; width: 200px; background: #f8f9fa;" />
-                </div>
-            </div>
+        <div class="description">
+            <p>We asked two AI models to analyze the healthiness of this meal and suggest any improvements. We got these two responses - <strong>which one do you prefer?</strong> 🤔</p>
         </div>
 
-        <div class="upload-section">
-            <h3 style="margin-bottom: 20px; color: #495057;">Upload Your Data</h3>
-            <p style="margin-bottom: 20px; color: #6c757d;">Upload CSV files containing your prompts and responses</p>
-            
-            <div>
-                <input type="file" id="promptFile" accept=".csv" class="file-input" />
-                <label for="promptFile">Choose Prompts CSV</label>
-            </div>
-            
-            <div>
-                <input type="file" id="mistralFile" accept=".csv" class="file-input" />
-                <label for="mistralFile">Choose Mistral Responses CSV</label>
-            </div>
-            
-            <div>
-                <input type="file" id="geminiFile" accept=".csv" class="file-input" />
-                <label for="geminiFile">Choose Gemini Responses CSV</label>
-            </div>
-        </div>
+        <div id="loading" style="text-align:center; margin:20px;">
+            <div class="spinner"></div>
+            <p>Loading responses...</p>
+          </div>
 
-        <div class="controls">
-            <button class="btn btn-primary" onclick="loadData()">Load Data</button>
-            <button class="btn btn-secondary" onclick="previousSet()">← Previous</button>
-            <button class="btn btn-secondary" onclick="nextSet()">Next →</button>
-            <button class="btn" style="background: #28a745; color: white;" onclick="loadSampleData()">Try Sample Data</button>
-        </div>
-
-        <div class="progress-section" id="progressSection" style="display: none;">
-            <h4 style="margin-bottom: 15px; color: #1976d2;">📊 Your Progress</h4>
+        <div id="votingSection" class="voting-section">
             <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-            </div>
-            <div class="completion-status">
-                <span>Completed: <span id="completedCount">0</span> / <span id="totalQuestions">5</span></span>
-                <span id="progressPercentage">0%</span>
-            </div>
-        </div>
-
-        <div id="statusMessage"></div>
-
-        <div id="contentArea" style="display: none;">
-            <div class="prompt-section">
-                <div class="prompt-title">Prompt:</div>
-                <div class="prompt-text" id="currentPrompt"></div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text" id="progressText">Vote 1 of 5 🎯</div>
             </div>
 
-            <div class="response-grid" id="responseGrid">
-                <!-- Response cards will be dynamically generated here -->
+            <div id="mealDescription" class="meal-description" style="display: none;">
+                <h3>🍽️ Meal Description</h3>
+                <p id="mealText"></p>
             </div>
 
-            <div class="navigation">
-                <div class="nav-info">
-                    <span id="currentIndex">1</span> of <span id="totalSets">5</span>
+            <div id="comparisonContainer" class="comparison-container">
+                <div class="response-card">
+                    <div class="response-header">
+                        <span class="response-label" id="labelA">Response A</span>
+                        <span class="model-index" id="modelA"></span>
+                    </div>
+                    <div class="response-content" id="responseA"></div>
+                    <button class="btn vote-btn" onclick="vote(0)" id="voteABtn">👍 Prefer This Response</button>
+                </div>
+
+                <div class="response-card">
+                    <div class="response-header">
+                        <span class="response-label" id="labelB">Response B</span>
+                        <span class="model-index" id="modelB"></span>
+                    </div>
+                    <div class="response-content" id="responseB"></div>
+                    <button class="btn vote-btn" onclick="vote(1)" id="voteBBtn">👍 Prefer This Response</button>
                 </div>
             </div>
 
-            <div class="mandatory-notice" id="mandatoryNotice">
-                ⚠️ <strong>Important:</strong> Please vote on all 5 comparisons before exporting your results. 
-                Your responses are valuable for this research!
+            <div class="neither-container">
+                <button class="btn neither-btn" onclick="voteNeither()">🤷 Neither - Both are equally good/bad</button>
             </div>
-        </div>
 
-        <div id="exportSection" class="export-section incomplete" style="display: none;">
-            <div class="completion-checkmark" id="completionIcon">⏳</div>
-            <h3 id="exportTitle">Complete All Comparisons</h3>
-            <p id="exportMessage">Please vote on all 5 response pairs to export your results.</p>
-            <button class="btn btn-primary" id="exportBtn" onclick="exportResults()" disabled>
-                📤 Submit My Responses
-            </button>
-        </div>
+            <div id="submitSection" class="submit-section">
+                <h3>🎉 Great job! You've completed 5 votes!</h3>
+                <p style="margin-bottom: 20px; color: #4a5568;">What would you like to do next?</p>
+                <button class="btn submit-btn" onclick="submitVotes()">✅ Submit My Votes & Finish</button>
+                <button class="btn continue-btn" onclick="continueVoting()">➕ Do 5 More Votes</button>
+            </div>
 
-        <div id="resultsSection" class="results-section" style="display: none;">
-            <div class="results-header">📊 User Preferences Results</div>
-            <div class="results-grid">
-                <div class="result-card">
-                    <div class="result-number" id="responseACount" style="color: #667eea;">0</div>
-                    <div class="result-label">Response A Wins</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-number" id="responseBCount" style="color: #764ba2;">0</div>
-                    <div class="result-label">Response B Wins</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-number" id="totalVotes">0</div>
-                    <div class="result-label">Total Votes</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-number" id="completionRate">0%</div>
-                    <div class="result-label">Completion Rate</div>
-                </div>
-            </div>
-            <div class="controls">
-                <button class="btn export-btn" onclick="exportResults()">📥 Export Results</button>
-                <button class="btn btn-secondary" onclick="clearResults()">🗑️ Clear All Votes</button>
-            </div>
+            <div id="status" class="status"></div>
         </div>
     </div>
 
     <script>
-        // Google Sheets integration
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0Mw4NYekqs0UIGcOXFmak7QqRa4hfPIoWJVAcenoDk5FgwYKJg7IS8DIBRSllYWJ5XA/exec'; // Replace with your script URL
+        // 🔧 CONFIGURE THIS: Replace with your Google Apps Script web app URL
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzeJsOoWYvKzVvuGYpHVc0BZSL05Y8uG2aYC44WuN-ccF3YiwGS_ErqA9XjOO7Sg69j/exec';
         
-        let promptsData = [];
-        let mistralData = [];
-        let geminiData = [];
-        let currentSetIndex = 0;
-        const maxSets = 5;
-        
-        // Store user preferences and randomization
-        let userPreferences = {}; // { index: 'A' | 'B' }
-        let responseMapping = {}; // { index: { A: 'mistral', B: 'gemini' } } - for admin tracking only
-        let participantId = '';
-        let sessionId = '';
+        let unvotedRows = [];
+        let currentPair = [];
+        let votesInCurrentSession = 0;
+        let totalVotes = 0;
+        let userId = '';
 
-        // Generate unique session ID
-        function generateSessionId() {
-            return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
+        // Generate unique user ID automatically
+        function generateUserId() {
+            // Try to get existing user ID from session storage first
+            let existingId = sessionStorage.getItem('voting_user_id');
+            if (existingId) {
+                return existingId;
+            }
 
-        function showStatus(message, isError = false) {
-            const statusDiv = document.getElementById('statusMessage');
-            statusDiv.textContent = message;
-            statusDiv.className = `status-message ${isError ? 'status-error' : 'status-success'}`;
-            statusDiv.style.display = 'block';
+            // Create browser fingerprint
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('Browser fingerprint', 2, 2);
+            const canvasFingerprint = canvas.toDataURL();
+
+            // Collect browser info
+            const browserInfo = {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                screen: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                canvas: canvasFingerprint.slice(-50), // Last 50 chars
+                timestamp: Date.now()
+            };
+
+            // Create hash from browser info
+            let hash = 0;
+            const str = JSON.stringify(browserInfo);
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+
+            // Create user ID: timestamp + hash + random
+            const timestamp = Date.now().toString(36);
+            const hashStr = Math.abs(hash).toString(36);
+            const random = Math.random().toString(36).substr(2, 5);
+            const newUserId = `user_${timestamp}_${hashStr}_${random}`;
+
+            // Store in session storage
+            sessionStorage.setItem('voting_user_id', newUserId);
             
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-            }, 3000);
+            return newUserId;
         }
 
-        function loadSampleData() {
-            // Create sample data for demonstration
-            promptsData = [
-                "Create a healthy breakfast recipe that takes less than 10 minutes to prepare.",
-                "Design a quick lunch meal for someone with dietary restrictions.",
-                "Suggest a dinner recipe that uses seasonal vegetables.",
-                "Plan a nutritious snack that's perfect for post-workout recovery.",
-                "Create a weekend brunch recipe that serves 4 people."
-            ];
-
-            mistralData = [
-                "Quick Avocado Toast: Toast 2 slices of whole grain bread, mash 1 ripe avocado with lemon juice, salt, and pepper. Spread on toast, top with cherry tomatoes and a sprinkle of hemp seeds. Ready in 5 minutes with protein, healthy fats, and fiber to fuel your morning.",
-                "Mediterranean Quinoa Bowl: Combine pre-cooked quinoa with cucumber, tomatoes, olives, and feta cheese. Dress with olive oil and lemon. This gluten-free, vegetarian option is rich in protein and can be prepared in advance for busy days.",
-                "Roasted Autumn Vegetables with Herbs: Toss butternut squash, Brussels sprouts, and sweet potatoes with olive oil, rosemary, and thyme. Roast at 425°F for 25-30 minutes. Serve over quinoa or with grilled protein for a complete seasonal meal.",
-                "Greek Yogurt Parfait: Layer Greek yogurt with berries, granola, and a drizzle of honey. Add chia seeds for extra protein and omega-3s. This combination provides probiotics, antioxidants, and sustained energy perfect for post-exercise recovery.",
-                "Weekend Pancake Stack: Make fluffy pancakes using oat flour, eggs, and Greek yogurt. Serve with fresh berries and maple syrup. This protein-rich version serves 4 and creates a special weekend morning experience for the whole family."
-            ];
-
-            geminiData = [
-                "Energizing Smoothie Bowl: Blend frozen banana, spinach, and protein powder with almond milk. Pour into a bowl and top with granola, fresh berries, and coconut flakes. This nutrient-dense breakfast provides vitamins, minerals, and sustained energy in just 8 minutes.",
-                "Asian-Inspired Lettuce Wraps: Fill butter lettuce leaves with cooked ground turkey, shredded carrots, and edamame. Dress with sesame oil and rice vinegar. This low-carb, high-protein lunch is naturally gluten-free and dairy-free.",
-                "Harvest Vegetable Curry: Sauté seasonal squash, carrots, and kale in coconut milk with curry spices. Serve over brown rice. This warming dinner celebrates fall flavors while providing plant-based nutrition and comfort food satisfaction.",
-                "Power Balls: Mix dates, almonds, and cacao powder in a food processor. Roll into balls and chill. These no-bake energy bites provide natural sugars, healthy fats, and antioxidants - perfect for pre or post-workout fuel.",
-                "Stuffed French Toast: Create a cream cheese and berry filling between thick bread slices, dip in egg mixture, and cook until golden. Dust with powdered sugar and serve with fresh fruit. This indulgent brunch recipe serves 4 and creates lasting weekend memories."
-            ];
-
-            // Generate random mapping for blind testing
-            generateRandomMapping();
-            
-            showStatus("Sample data loaded successfully!");
-            displayCurrentSet();
+        function showError(message) {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="error">❌ ${message}</div>`;
         }
 
-        function parseCSV(file) {
-            return new Promise((resolve, reject) => {
-                Papa.parse(file, {
-                    complete: function(results) {
-                        // Extract the data column (assuming first column contains the data)
-                        const data = results.data
-                            .filter(row => row[0] && row[0].trim()) // Filter out empty rows
-                            .map(row => row[0].trim()); // Get first column
-                        resolve(data);
-                    },
-                    error: function(error) {
-                        reject(error);
-                    },
-                    header: false,
-                    skipEmptyLines: true
-                });
-            });
+        function showSuccess(message) {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="success">✅ ${message}</div>`;
         }
 
-        async function loadData() {
-            const promptFile = document.getElementById('promptFile').files[0];
-            const mistralFile = document.getElementById('mistralFile').files[0];
-            const geminiFile = document.getElementById('geminiFile').files[0];
-
-            if (!promptFile || !mistralFile || !geminiFile) {
-                showStatus("Please select all three CSV files.", true);
-                return;
-            }
-
-            try {
-                showStatus("Loading data...");
-                
-                promptsData = await parseCSV(promptFile);
-                mistralData = await parseCSV(mistralFile);
-                geminiData = await parseCSV(geminiFile);
-
-                if (promptsData.length < maxSets || mistralData.length < maxSets || geminiData.length < maxSets) {
-                    showStatus(`Warning: You need at least ${maxSets} entries in each file. Some data may be missing.`, true);
-                }
-
-                // Generate random mapping for blind testing
-                generateRandomMapping();
-                
-                showStatus("Data loaded successfully!");
-                displayCurrentSet();
-            } catch (error) {
-                showStatus("Error loading files. Please check your CSV format.", true);
-                console.error(error);
-            }
-        }
-
-        async function submitToGoogleSheets(data) {
-            try {
-                showStatus("Submitting responses to database...");
-                
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    showStatus("✅ Responses submitted successfully!");
-                    return true;
-                } else {
-                    throw new Error(result.error || 'Unknown error occurred');
-                }
-            } catch (error) {
-                console.error('Error submitting to Google Sheets:', error);
-                showStatus("⚠️ Could not submit to database. Download backup file instead.", true);
-                return false;
-            }
+        function showLoading(message) {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="loading"><div class="spinner"></div>${message}</div>`;
         }
 
         function updateProgress() {
-            const completedCount = Object.keys(userPreferences).length;
-            const totalQuestions = Math.min(maxSets, Math.max(promptsData.length, mistralData.length, geminiData.length));
-            const percentage = Math.round((completedCount / totalQuestions) * 100);
-            
-            document.getElementById('completedCount').textContent = completedCount;
-            document.getElementById('totalQuestions').textContent = totalQuestions;
-            document.getElementById('progressPercentage').textContent = percentage + '%';
-            document.getElementById('progressFill').style.width = percentage + '%';
-            
-            // Update export section based on completion
-            const exportSection = document.getElementById('exportSection');
-            const exportBtn = document.getElementById('exportBtn');
-            const exportTitle = document.getElementById('exportTitle');
-            const exportMessage = document.getElementById('exportMessage');
-            const completionIcon = document.getElementById('completionIcon');
-            
-            exportSection.style.display = 'block';
-            
-            if (completedCount === totalQuestions) {
-                exportSection.className = 'export-section complete';
-                exportBtn.disabled = false;
-                exportBtn.style.opacity = '1';
-                exportTitle.textContent = '🎉 All Complete! Ready to Submit';
-                exportMessage.textContent = 'Thank you! You have completed all comparisons. Click to submit your responses.';
-                completionIcon.textContent = '✅';
-                
-                // Hide mandatory notice
-                document.getElementById('mandatoryNotice').style.display = 'none';
-            } else {
-                exportSection.className = 'export-section incomplete';
-                exportBtn.disabled = true;
-                exportBtn.style.opacity = '0.5';
-                exportTitle.textContent = `Complete All Comparisons (${completedCount}/${totalQuestions})`;
-                exportMessage.textContent = `Please vote on ${totalQuestions - completedCount} more comparison${totalQuestions - completedCount !== 1 ? 's' : ''} to submit your responses.`;
-                completionIcon.textContent = '⏳';
-                
-                // Show mandatory notice
-                document.getElementById('mandatoryNotice').style.display = 'block';
-            }
+            const progress = (votesInCurrentSession / 5) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `Vote ${votesInCurrentSession + 1} of 5 🎯`;
         }
 
-        function generateRandomMapping() {
-            // Create random mapping for each set
-            responseMapping = {};
-            for (let i = 0; i < maxSets; i++) {
-                const randomize = Math.random() < 0.5;
-                responseMapping[i] = randomize ? 
-                    { A: 'gemini', B: 'mistral' } : 
-                    { A: 'mistral', B: 'gemini' };
-            }
-        }
-
-        function displayCurrentSet() {
-            if (promptsData.length === 0) {
+        async function initializeApp() {
+            if (APPS_SCRIPT_URL.includes('YOUR_SCRIPT_ID_HERE')) {
+                showError('Please configure the APPS_SCRIPT_URL variable in the code first! 🔧');
                 return;
             }
 
-            document.getElementById('contentArea').style.display = 'block';
-            document.getElementById('progressSection').style.display = 'block';
-            
-            // Display current prompt
-            document.getElementById('currentPrompt').textContent = promptsData[currentSetIndex] || "No prompt available";
-            
-            // Get the mapping for this set
-            const mapping = responseMapping[currentSetIndex];
-            const responseAText = mapping.A === 'mistral' ? 
-                (mistralData[currentSetIndex] || "No response available") : 
-                (geminiData[currentSetIndex] || "No response available");
-            const responseBText = mapping.B === 'mistral' ? 
-                (mistralData[currentSetIndex] || "No response available") : 
-                (geminiData[currentSetIndex] || "No response available");
-            
-            // Generate response cards dynamically
-            const responseGrid = document.getElementById('responseGrid');
-            responseGrid.innerHTML = `
-                <div class="response-card response-a">
-                    <div class="model-header">
-                        <div class="model-icon response-a-icon"></div>
-                        Response A
-                    </div>
-                    <div class="response-text">${responseAText}</div>
-                    <div class="preference-buttons">
-                        <button class="preference-btn" onclick="selectPreference(currentSetIndex, 'A')">
-                            👍 I prefer this response
-                        </button>
-                    </div>
-                </div>
+            // Generate unique user ID
+            userId = generateUserId();
+            console.log('User ID generated:', userId);
 
-                <div class="response-card response-b">
-                    <div class="model-header">
-                        <div class="model-icon response-b-icon"></div>
-                        Response B
-                    </div>
-                    <div class="response-text">${responseBText}</div>
-                    <div class="preference-buttons">
-                        <button class="preference-btn" onclick="selectPreference(currentSetIndex, 'B')">
-                            👍 I prefer this response
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            // Update navigation
-            document.getElementById('currentIndex').textContent = currentSetIndex + 1;
-            document.getElementById('totalSets').textContent = Math.min(maxSets, Math.max(promptsData.length, mistralData.length, geminiData.length));
-            
-            // Update preference button states
-            updatePreferenceButtons();
-            
-            // Update progress and results
-            updateProgress();
-            
-            // Show results if we have any votes
-            if (Object.keys(userPreferences).length > 0) {
-                updateResultsDisplay();
-                document.getElementById('resultsSection').style.display = 'block';
+            showLoading('Loading responses... 📊');
+
+            try {
+                await loadUnvotedRows();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('votingSection').style.display = 'block';
+                votesInCurrentSession = 0;
+                updateProgress();
+                await loadNextPair();
+            } catch (error) {
+                showError(`Failed to initialize: ${error.message}`);
             }
         }
 
-        function selectPreference(index, choice) {
-            // Get participant ID if not already set
-            const participantInput = document.getElementById('participantId');
-            if (!participantId && participantInput.value.trim()) {
-                participantId = participantInput.value.trim();
-            } else if (!participantId) {
-                showStatus("Please enter your name or ID before voting.", true);
-                participantInput.focus();
+        async function loadUnvotedRows() {
+            const url = `${APPS_SCRIPT_URL}?action=getUnvoted`;
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from Google Apps Script');
+            }
+
+            unvotedRows = await response.json();
+
+            if (!Array.isArray(unvotedRows) || unvotedRows.length < 2) {
+                throw new Error('Need at least 2 unvoted responses to compare');
+            }
+        }
+
+        async function loadNextPair() {
+            if (unvotedRows.length < 2) {
+                showSuccess('All responses have been voted on! 🎉');
                 return;
             }
 
-            userPreferences[index] = choice;
-            updatePreferenceButtons();
-            updateResultsDisplay();
-            updateProgress();
-            document.getElementById('resultsSection').style.display = 'block';
-            
-            // Auto-advance to next question after selection (optional)
-            setTimeout(() => {
-                if (currentSetIndex < maxSets - 1 && currentSetIndex < Math.max(promptsData.length, mistralData.length, geminiData.length) - 1) {
-                    nextSet();
+            // Group unvoted rows by Response_Index to ensure we compare responses from the same meal
+            const responseGroups = {};
+            unvotedRows.forEach(row => {
+                const responseIndex = row.responseIndex;
+                if (!responseGroups[responseIndex]) {
+                    responseGroups[responseIndex] = [];
                 }
-            }, 800);
-        }
-
-        function updatePreferenceButtons() {
-            const preference = userPreferences[currentSetIndex];
-            const responseABtn = document.querySelector('.response-a .preference-btn');
-            const responseBBtn = document.querySelector('.response-b .preference-btn');
-            
-            if (!responseABtn || !responseBBtn) return; // Cards not rendered yet
-            
-            // Reset button states
-            responseABtn.classList.remove('response-a-selected');
-            responseBBtn.classList.remove('response-b-selected');
-            
-            // Apply selected state
-            if (preference === 'A') {
-                responseABtn.classList.add('response-a-selected');
-                responseABtn.textContent = '✅ Selected!';
-                responseBBtn.textContent = '👍 I prefer this response';
-            } else if (preference === 'B') {
-                responseBBtn.classList.add('response-b-selected');
-                responseBBtn.textContent = '✅ Selected!';
-                responseABtn.textContent = '👍 I prefer this response';
-            } else {
-                responseABtn.textContent = '👍 I prefer this response';
-                responseBBtn.textContent = '👍 I prefer this response';
-            }
-        }
-
-        function updateResultsDisplay() {
-            const responseAWins = Object.values(userPreferences).filter(p => p === 'A').length;
-            const responseBWins = Object.values(userPreferences).filter(p => p === 'B').length;
-            const totalVotes = responseAWins + responseBWins;
-            const maxPossibleVotes = Math.min(maxSets, Math.max(promptsData.length, mistralData.length, geminiData.length));
-            const completionRate = Math.round((totalVotes / maxPossibleVotes) * 100);
-
-            document.getElementById('responseACount').textContent = responseAWins;
-            document.getElementById('responseBCount').textContent = responseBWins;
-            document.getElementById('totalVotes').textContent = totalVotes;
-            document.getElementById('completionRate').textContent = completionRate + '%';
-        }
-
-        async function exportResults() {
-            const completedCount = Object.keys(userPreferences).length;
-            const totalQuestions = Math.min(maxSets, Math.max(promptsData.length, mistralData.length, geminiData.length));
-            
-            if (completedCount < totalQuestions) {
-                showStatus("Please complete all comparisons before submitting.", true);
-                return;
-            }
-
-            if (!participantId) {
-                showStatus("Please enter your name or ID before submitting.", true);
-                document.getElementById('participantId').focus();
-                return;
-            }
-
-            // Prepare data for Google Sheets
-            const submissionData = {
-                participantId: participantId,
-                sessionId: sessionId,
-                timestamp: new Date().toISOString(),
-                completionStatus: "COMPLETE",
-                
-                // Flatten the data for easier Google Sheets processing
-                responses: []
-            };
-
-            // Add each comparison as a separate row
-            for (let i = 0; i < maxSets; i++) {
-                if (promptsData[i] && userPreferences[i]) {
-                    const mapping = responseMapping[i];
-                    const userChoice = userPreferences[i];
-                    const actualModelChosen = mapping[userChoice];
-                    
-                    submissionData.responses.push({
-                        participantId: participantId,
-                        sessionId: sessionId,
-                        timestamp: new Date().toISOString(),
-                        questionNumber: i + 1,
-                        prompt: promptsData[i],
-                        responseA: mapping.A === 'mistral' ? mistralData[i] : geminiData[i],
-                        responseB: mapping.B === 'mistral' ? mistralData[i] : geminiData[i],
-                        responseAModel: mapping.A,
-                        responseBModel: mapping.B,
-                        userChoice: userChoice, // A or B
-                        actualModelChosen: actualModelChosen,
-                        mistralWon: actualModelChosen === 'mistral' ? 1 : 0,
-                        geminiWon: actualModelChosen === 'gemini' ? 1 : 0
-                    });
-                }
-            }
-
-            // Try to submit to Google Sheets first
-            const submitted = await submitToGoogleSheets(submissionData);
-            
-            if (submitted) {
-                // Success - show completion message
-                showStatus('✅ Responses submitted successfully! Thank you for participating.');
-                
-                setTimeout(() => {
-                    alert(`🎉 Thank you ${participantId}!\n\nYour responses have been submitted successfully.\n\nSession ID: ${sessionId}\n\nYour participation is greatly appreciated!`);
-                }, 500);
-                
-                // Disable the submit button to prevent duplicate submissions
-                document.getElementById('exportBtn').disabled = true;
-                document.getElementById('exportBtn').textContent = '✅ Submitted';
-                
-            } else {
-                // Fallback to file download if Google Sheets fails
-                downloadBackupFile(submissionData);
-            }
-        }
-
-        function downloadBackupFile(data) {
-            // Create a comprehensive backup file
-            const backupData = {
-                ...data,
-                note: "This is a backup file. Please email this to the researcher.",
-                summary: {
-                    responseAWins: Object.values(userPreferences).filter(p => p === 'A').length,
-                    responseBWins: Object.values(userPreferences).filter(p => p === 'B').length,
-                    totalVotes: Object.keys(userPreferences).length,
-                    actualResults: calculateActualModelResults()
-                }
-            };
-
-            // Generate filename with participant info
-            const timestamp = new Date().toISOString().split('T')[0];
-            const safeParticipantId = participantId.replace(/[^a-zA-Z0-9]/g, '_');
-            const filename = `BACKUP_AI_Study_${safeParticipantId}_${sessionId}_${timestamp}.json`;
-
-            // Download file
-            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            showStatus('⚠️ Backup file downloaded. Please email this file to the researcher.');
-            
-            setTimeout(() => {
-                alert(`⚠️ Submission failed, but don't worry!\n\nA backup file has been downloaded:\n${filename}\n\nPlease email this file to the researcher.\nThank you ${participantId}!`);
-            }, 500);
-        }
-
-        function calculateActualModelResults() {
-            let mistralWins = 0;
-            let geminiWins = 0;
-            
-            Object.keys(userPreferences).forEach(index => {
-                const userChoice = userPreferences[index];
-                const mapping = responseMapping[index];
-                const chosenModel = mapping[userChoice];
-                
-                if (chosenModel === 'mistral') mistralWins++;
-                if (chosenModel === 'gemini') geminiWins++;
+                responseGroups[responseIndex].push(row);
             });
-            
-            return { mistralWins, geminiWins };
+
+            // Find groups that have exactly 2 responses (a complete pair)
+            const availablePairs = Object.values(responseGroups).filter(group => group.length === 2);
+
+            if (availablePairs.length === 0) {
+                showSuccess('All complete response pairs have been voted on! 🎉');
+                return;
+            }
+
+            // Randomly select one of the available pairs
+            const randomPairIndex = Math.floor(Math.random() * availablePairs.length);
+            currentPair = availablePairs[randomPairIndex];
+
+            // Randomly decide which response goes on which side to avoid bias
+            const shouldSwap = Math.random() < 0.5;
+            if (shouldSwap) {
+                currentPair = [currentPair[1], currentPair[0]];
+            }
+
+            // Display the responses
+            document.getElementById('modelA').textContent = `Model ${currentPair[0].modelIndex}`;
+            document.getElementById('responseA').innerHTML = marked.parse(currentPair[0].promptOutput);
+            document.getElementById('modelB').textContent = `Model ${currentPair[1].modelIndex}`;
+            document.getElementById('responseB').innerHTML = marked.parse(currentPair[1].promptOutput);
+
+            // Show meal description (both responses should have the same meal description)
+            const mealDesc = currentPair[0].mealDescription || currentPair[1].mealDescription;
+            if (mealDesc) {
+                document.getElementById('mealText').textContent = mealDesc;
+                document.getElementById('mealDescription').style.display = 'block';
+            } else {
+                document.getElementById('mealDescription').style.display = 'none';
+            }
+
+            document.getElementById('status').innerHTML = `<p style="color: white;">💪 Available pairs remaining: ${availablePairs.length}</p>`;
         }
 
-        function clearResults() {
-            if (confirm('Are you sure you want to clear all votes? This cannot be undone.')) {
-                userPreferences = {};
-                updatePreferenceButtons();
-                document.getElementById('resultsSection').style.display = 'none';
-                showStatus('All votes cleared.');
+        async function vote(chosenIndex) {
+            await recordVote(chosenIndex, 'normal');
+        }
+
+        async function voteNeither() {
+            await recordVote(-1, 'neither');
+        }
+
+        async function recordVote(chosenIndex, voteType) {
+            showLoading('Recording your vote... 📝');
+
+            const winnerRow = currentPair[0];
+            const loserRow = currentPair[1];
+
+            try {
+                let url;
+                if (voteType === 'neither') {
+                    url = `${APPS_SCRIPT_URL}?action=vote&winnerRow=${winnerRow.rowIndex}&loserRow=${loserRow.rowIndex}&votetype=neither&userId=${encodeURIComponent(userId)}`;
+                } else {
+                    const actualWinner = currentPair[chosenIndex];
+                    const actualLoser = currentPair[1 - chosenIndex];
+                    url = `${APPS_SCRIPT_URL}?action=vote&winnerRow=${actualWinner.rowIndex}&loserRow=${actualLoser.rowIndex}&votetype=normal&userId=${encodeURIComponent(userId)}`;
+                }
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to record vote');
+                }
+
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error('Vote recording failed');
+                }
+
+                // Remove both rows from unvoted list
+                unvotedRows = unvotedRows.filter(row => 
+                    row.rowIndex !== winnerRow.rowIndex && row.rowIndex !== loserRow.rowIndex
+                );
+
+                votesInCurrentSession++;
+                totalVotes++;
+
+                let message = '';
+                if (voteType === 'neither') {
+                    message = '🤝 Neither response selected - marked as tie!';
+                } else {
+                    message = `👍 Vote recorded! Response ${chosenIndex === 0 ? 'A' : 'B'} wins.`;
+                }
+                
+                showSuccess(message);
+
+                // Check if we've completed 5 votes
+                if (votesInCurrentSession >= 5) {
+                    document.getElementById('submitSection').style.display = 'block';
+                    document.getElementById('comparisonContainer').style.display = 'none';
+                    document.getElementById('mealDescription').style.display = 'none';
+                    document.querySelector('.neither-container').style.display = 'none';
+                    return;
+                }
+
+                updateProgress();
+
+                // Load next pair after a short delay
+                setTimeout(async () => {
+                    await loadNextPair();
+                }, 1500);
+
+            } catch (error) {
+                showError(`Failed to record vote: ${error.message}`);
             }
         }
 
-        function nextSet() {
-            if (currentSetIndex < maxSets - 1 && currentSetIndex < Math.max(promptsData.length, mistralData.length, geminiData.length) - 1) {
-                currentSetIndex++;
-                displayCurrentSet();
-            }
+        async function submitVotes() {
+            showSuccess(`🎉 Thank you! You completed ${totalVotes} total votes. Your responses have been recorded!`);
+            document.getElementById('submitSection').innerHTML = `
+                <h3>✨ Thank you for participating! ✨</h3>
+                <p style="color: #4a5568; font-size: 1.1rem; margin: 20px 0;">
+                    You completed <strong>${totalVotes} votes</strong> in total. Your feedback is valuable! 🙏
+                </p>
+                <button class="btn" onclick="location.reload()">🔄 Start Over (New Session)</button>
+            `;
         }
 
-        function previousSet() {
-            if (currentSetIndex > 0) {
-                currentSetIndex--;
-                displayCurrentSet();
-            }
+        async function continueVoting() {
+            votesInCurrentSession = 0;
+            updateProgress();
+            document.getElementById('submitSection').style.display = 'none';
+            document.getElementById('comparisonContainer').style.display = 'grid';
+            document.querySelector('.neither-container').style.display = 'block';
+            await loadNextPair();
         }
-
-        // Initialize with sample data
-        loadSampleData();
+        this.initializeApp();
     </script>
 </body>
 </html>
